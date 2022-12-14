@@ -1,0 +1,3 @@
+class Addcartmodel{
+  String? proquantity;
+}

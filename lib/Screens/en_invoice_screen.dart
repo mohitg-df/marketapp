@@ -1,0 +1,97 @@
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter/material.dart';
+import 'package:marketapp/API/Checkout_API.dart';
+import 'package:marketapp/API/login_API.dart';
+import 'package:marketapp/API/pdf_api.dart';
+import 'package:marketapp/API/pdf_invoice_api.dart';
+import 'package:marketapp/Models/customer.dart';
+import 'package:marketapp/Models/invoice.dart';
+import 'package:marketapp/Models/supplier.dart';
+
+class Invoicescreen extends StatefulWidget {
+  const Invoicescreen({Key? key}) : super(key: key);
+
+  @override
+  State<Invoicescreen> createState() => _InvoicescreenState();
+}
+
+class _InvoicescreenState extends State<Invoicescreen> {
+  List<InvoiceItem> invoicelist = [];
+  String query = '';
+
+  @override
+  void initState() {
+    checkoutapicall();
+    Future.delayed(Duration(milliseconds: 900), () {
+      pdffunct();
+    });
+    // TODO: implement initState
+    super.initState();
+  }
+
+  Future checkoutapicall() async {
+    final invoicelist = await Checkoutapi.checkoutpro(context, query);
+
+    setState(() => this.invoicelist = invoicelist);
+  }
+
+  void pdffunct() async {
+    final date = DateTime.now();
+    final dueDate = date.add(Duration(days: 7));
+
+    final invoice = Invoice(
+      supplier: Supplier(
+        name: '''Let'SBuy''',
+        address: 'Bandhavgarh Colony, Satna, Madhya Pradesh',
+        paymentInfo: '7723949581@apl',
+      ),
+      customer: Customer(
+        name: '${Firstname} ${Lastname}',
+        address: 'Satna, MP',
+      ),
+      info: InvoiceInfo(
+        date: date,
+        dueDate: dueDate,
+        description: 'My description...',
+        number: '${DateTime
+            .now()
+            .year}-9999',
+      ),
+      items: invoicelist,
+    );
+
+    // final pdfFile = await PdfInvoiceApi.generate(invoice);
+    final pdfFile = await PdfInvoiceApi.generatepdf(invoice);
+
+    PdfApi.openFile(pdfFile, context, query);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      // body: Center(
+      //   child: Column(
+      //     children: [
+      //       AutoSizeText("Thank You, For the Shopping"),
+      //       ElevatedButton(
+      //         onPressed: ()  {
+      //           setState(() {
+      //             Navigator.of(context).pushReplacementNamed('/Homescreen');
+      //           });
+      //         },
+      //         child: const AutoSizeText(
+      //           "Back To Shopping",
+      //           style: TextStyle(
+      //             letterSpacing: 1.0,
+      //             fontSize: 12.0,
+      //             fontWeight: FontWeight.w600,
+      //             color: Colors.white,
+      //           ),
+      //         ),
+      //       ),
+      //     ],
+      //   ),
+      // ),
+    );
+  }
+}

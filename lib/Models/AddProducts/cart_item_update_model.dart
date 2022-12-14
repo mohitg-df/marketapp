@@ -1,0 +1,3 @@
+class Cartitemupdatemodel{
+  String? caartproquantity;
+}

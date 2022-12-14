@@ -1,0 +1,1 @@
+var baseurl = 'http://ec2-35-78-234-61.ap-northeast-1.compute.amazonaws.com:8080/dukanapp/api/dukan'; //10.0.2.2:8080
